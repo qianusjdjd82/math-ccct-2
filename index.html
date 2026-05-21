@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Function Website</title>
+<script src="https://www.desmos.com/api/v1.6/calculator.js?apiKey=xyz"></script>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin:0;
+  /* Ocean blue → lemon green gradient */
+  background: linear-gradient(135deg, #5bc0eb, #d4ff72);
+  font-size: 16px;
+}
+
+.header {
+  text-align:center;
+  font-weight:bold;
+  font-size:36px;
+  margin:20px 0;
+  color:#111;
+}
+
+.container {
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:20px;
+  padding:20px;
+}
+
+.card {
+  border-radius:15px;
+  padding:15px;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+h3 {
+  margin-top:0;
+  font-weight:bold;
+  font-size: 22px;
+}
+
+iframe {
+  width:100%;
+  height:300px;
+  margin-bottom:10px;
+  border:none;
+}
+
+/* 富文本工具栏样式 */
+.editor-toolbar {
+  background: #f1f1f1;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  padding: 5px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.editor-toolbar button, .editor-toolbar select, .editor-toolbar input {
+  padding: 3px 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* 富文本可编辑区域样式 */
+.editor-content {
+  width:100%;
+  height:800px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  font-size: 16px;
+}
+
+.editor-content:focus {
+  outline: none;
+  border-color: #3a86ff;
+}
+
+.save-btn { 
+  margin-top:10px; 
+  padding: 8px 16px;
+  font-size: 14px;
+  align-self: flex-start;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="header">My Time In Malaysia</div>
+<div class="container" id="container"></div>
+
+<script>
+const colors = [
+"#ff7f11", // orange
+"#ff3b3b", // red
+"#9d4edd", // purple
+"#38b000", // green
+"#3a86ff", // blue
+"#ffd60a", // yellow
+"#00b4d8", // cyan
+"#8d5524", // brown
+"#ff66c4", // pink
+"#6c757d"  // gray (empty)
+];
+
+const functions = [
+{name:"Reciprocal Function", link:"https://www.desmos.com/calculator/34zujzfoyj"},
+{name:"Reciprocal Square Function", link:"https://www.desmos.com/calculator"},
+{name:"Polynomial Function", link:"https://www.desmos.com/calculator"},
+{name:"Trigonometric Asymptote Function", link:"https://www.desmos.com/calculator"},
+{name:"Sinusoidal Function", link:"https://www.desmos.com/calculator"},
+{name:"Exponential Function", link:"https://www.desmos.com/calculator"},
+{name:"Logarithmic Function", link:"https://www.desmos.com/calculator"},
+// 这里已经成功替换为了你提供的最新指数函数图像
+{name:"Extra Exponential Function", link:"https://www.desmos.com/calculator/n45amups5d"},
+{name:"Extra Sinusoidal Function", link:"https://www.desmos.com/calculator/f5lk59t0tq"},
+{name:"Additional Function", link:"https://www.desmos.com/calculator"}
+];
+
+const container = document.getElementById('container');
+
+functions.forEach((f, i)=>{
+  const card = document.createElement('div');
+  card.className='card';
+
+  card.innerHTML = `
+    <h3 style="color:${colors[i]}">${f.name}</h3>
+    <iframe src="${f.link}"></iframe>
+    
+    <div class="editor-toolbar">
+      <button type="button" onclick="execCmd('bold', '${i}')" title="加粗"><b>B</b></button>
+      <button type="button" onclick="execCmd('underline', '${i}')" title="下划线"><u>U</u></button>
+      
+      <input type="color" onchange="execCmd('foreColor', '${i}', this.value)" title="字体颜色">
+      
+      <select onchange="execCmd('fontName', '${i}', this.value)" title="字体样式">
+        <option value="Arial">Arial</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Courier New">Courier New</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Impact">Impact (粗黑体)</option>
+        <option value="Comic Sans MS">Comic Sans MS (卡通体)</option>
+        <option value="Microsoft YaHei">微软雅黑</option>
+        <option value="SimSun">宋体</option>
+      </select>
+
+      <select onchange="execCmd('fontSize', '${i}', this.value)" title="字体大小">
+        <option value="3">标准</option>
+        <option value="1">极小</option>
+        <option value="2">较小</option>
+        <option value="4">中等</option>
+        <option value="5">较大</option>
+        <option value="6">大</option>
+        <option value="7">极大</option>
+      </select>
+    </div>
+
+    <div id="text${i}" class="editor-content" contenteditable="true" placeholder="Write your explanation..."></div>
+    
+    <button class="save-btn" onclick="save(${i})">Save</button>
+  `;
+
+  container.appendChild(card);
+});
+
+function execCmd(command, index, value = null) {
+  const editor = document.getElementById('text' + index);
+  editor.focus();
+  document.execCommand(command, false, value);
+}
+
+function save(i){
+  const content = document.getElementById('text'+i).innerHTML;
+  localStorage.setItem('text_html_'+i, content);
+  alert('Saved successfully!');
+}
+
+window.onload = ()=>{
+  functions.forEach((_,i)=>{
+    const savedContent = localStorage.getItem('text_html_'+i);
+    if(savedContent) {
+      document.getElementById('text'+i).innerHTML = savedContent;
+    }
+  });
+}
+</script>
+
+</body>
+</html>
