@@ -107,17 +107,16 @@ iframe {
 <div class="container" id="container"></div>
 
 <script>
-// ==================== ⚠️ 必须配置区 ⚠️ ====================
-// 你需要去 Firebase 官网申请一个免费项目，并将你的密钥填在这里。
-// 步骤见下方文字说明。
+// ==================== ⚠️ 已经配置完毕 ⚠️ ====================
+// 这里已完全填入你截图 image_8b926f.png 中的专属云数据库凭证
 const firebaseConfig = {
-  apiKey: "你的_API_KEY",
-  authDomain: "你的_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://你的_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "你的_PROJECT_ID",
-  storageBucket: "你的_PROJECT_ID.appspot.com",
-  messagingSenderId: "你的_SENDER_ID",
-  appId: "你的_APP_ID"
+  apiKey: "AIzaSyCuN-BVa6GaX_8XPFSG0FMd8037zOt4d2g",
+  authDomain: "math-cct.firebaseapp.com",
+  databaseURL: "https://math-cct-default-rtdb.firebaseio.com",
+  projectId: "math-cct",
+  storageBucket: "math-cct.firebaseapp.com",
+  messagingSenderId: "603371183762",
+  appId: "1:603371183762:web:8ba3383b1d857336a0504b"
 };
 
 // 初始化 Firebase
@@ -153,7 +152,6 @@ const functions = [
 
 const container = document.getElementById('container');
 
-// 动态渲染卡片结构
 functions.forEach((f, i)=>{
   const card = document.createElement('div');
   card.className='card';
@@ -190,7 +188,7 @@ functions.forEach((f, i)=>{
       </select>
     </div>
 
-    <div id="text${i}" class="editor-content" contenteditable="true" placeholder="Loading content from cloud..."></div>
+    <div id="text${i}" class="editor-content" contenteditable="true" placeholder="Write your explanation..."></div>
     
     <button class="save-btn" onclick="saveToCloud(${i})">Save</button>
   `;
@@ -204,11 +202,9 @@ function execCmd(command, index, value = null) {
   document.execCommand(command, false, value);
 }
 
-// 核心升级 1：将内容保存到云端数据库中，代替原有的 localStorage
+// 实时同步云端保存
 function saveToCloud(i){
   const content = document.getElementById('text'+i).innerHTML;
-  
-  // 将内容推送到 Firebase 的指定节点（例如：notes/text_0）
   database.ref('notes/text_' + i).set({
     htmlContent: content,
     timestamp: Date.now()
@@ -219,18 +215,14 @@ function saveToCloud(i){
   });
 }
 
-// 核心升级 2：实时监听云端数据库。只要有人更新了，所有人网页上的内容会立刻秒级同步！
+// 实时云端监听更新
 window.onload = ()=>{
   functions.forEach((_, i)=>{
     database.ref('notes/text_' + i).on('value', (snapshot) => {
       const data = snapshot.val();
       const editor = document.getElementById('text' + i);
-      
-      // 如果云端有数据，则显示。为了避免打字时被别人的输入覆盖，这里只在未聚焦或初始加载时同步
       if (data && document.activeElement !== editor) {
         editor.innerHTML = data.htmlContent;
-      } else if (!data) {
-        editor.innerHTML = ""; // 如果云端是空的
       }
     });
   });
