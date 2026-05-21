@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <title>Function Website</title>
 <script src="https://www.desmos.com/api/v1.6/calculator.js?apiKey=xyz"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -103,6 +107,24 @@ iframe {
 <div class="container" id="container"></div>
 
 <script>
+// ==================== ⚠️ 必须配置区 ⚠️ ====================
+// 你需要去 Firebase 官网申请一个免费项目，并将你的密钥填在这里。
+// 步骤见下方文字说明。
+const firebaseConfig = {
+  apiKey: "你的_API_KEY",
+  authDomain: "你的_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://你的_PROJECT_ID-default-rtdb.firebaseio.com",
+  projectId: "你的_PROJECT_ID",
+  storageBucket: "你的_PROJECT_ID.appspot.com",
+  messagingSenderId: "你的_SENDER_ID",
+  appId: "你的_APP_ID"
+};
+
+// 初始化 Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+// =========================================================
+
 const colors = [
 "#ff7f11", // orange
 "#ff3b3b", // red
@@ -122,17 +144,16 @@ const functions = [
 {name:"Polynomial Function", link:"https://www.desmos.com/calculator/iwk1ormcr7"},
 {name:"Trigonometric Asymptote Function", link:"https://www.desmos.com/calculator/hdarhxezos?lang=vi"},
 {name:"Sinusoidal Function", link:"https://www.desmos.com/calculator/ksyci87tvt?lang=vi"},
-// 1. 这里已更新为最新的 Exponential Function 图像
 {name:"Exponential Function", link:"https://www.desmos.com/calculator/lw3gyefznd"},
 {name:"Logarithmic Function", link:"https://www.desmos.com/calculator"},
 {name:"Extra Exponential Function", link:"https://www.desmos.com/calculator/n45amups5d"},
 {name:"Extra Sinusoidal Function", link:"https://www.desmos.com/calculator/f5lk59t0tq"},
-// 2. 这里已更新为最新的 Additional Function 图像
 {name:"Additional Function", link:"https://www.desmos.com/calculator/mewhbk8mq2"}
 ];
 
 const container = document.getElementById('container');
 
+// 动态渲染卡片结构
 functions.forEach((f, i)=>{
   const card = document.createElement('div');
   card.className='card';
@@ -169,9 +190,9 @@ functions.forEach((f, i)=>{
       </select>
     </div>
 
-    <div id="text${i}" class="editor-content" contenteditable="true" placeholder="Write your explanation..."></div>
+    <div id="text${i}" class="editor-content" contenteditable="true" placeholder="Loading content from cloud..."></div>
     
-    <button class="save-btn" onclick="save(${i})">Save</button>
+    <button class="save-btn" onclick="saveToCloud(${i})">Save</button>
   `;
 
   container.appendChild(card);
@@ -183,18 +204,35 @@ function execCmd(command, index, value = null) {
   document.execCommand(command, false, value);
 }
 
-function save(i){
+// 核心升级 1：将内容保存到云端数据库中，代替原有的 localStorage
+function saveToCloud(i){
   const content = document.getElementById('text'+i).innerHTML;
-  localStorage.setItem('text_html_'+i, content);
-  alert('Saved successfully!');
+  
+  // 将内容推送到 Firebase 的指定节点（例如：notes/text_0）
+  database.ref('notes/text_' + i).set({
+    htmlContent: content,
+    timestamp: Date.now()
+  }).then(() => {
+    alert('Saved to cloud successfully!');
+  }).catch((error) => {
+    alert('Save failed: ' + error.message);
+  });
 }
 
+// 核心升级 2：实时监听云端数据库。只要有人更新了，所有人网页上的内容会立刻秒级同步！
 window.onload = ()=>{
-  functions.forEach((_,i)=>{
-    const savedContent = localStorage.getItem('text_html_'+i);
-    if(savedContent) {
-      document.getElementById('text'+i).innerHTML = savedContent;
-    }
+  functions.forEach((_, i)=>{
+    database.ref('notes/text_' + i).on('value', (snapshot) => {
+      const data = snapshot.val();
+      const editor = document.getElementById('text' + i);
+      
+      // 如果云端有数据，则显示。为了避免打字时被别人的输入覆盖，这里只在未聚焦或初始加载时同步
+      if (data && document.activeElement !== editor) {
+        editor.innerHTML = data.htmlContent;
+      } else if (!data) {
+        editor.innerHTML = ""; // 如果云端是空的
+      }
+    });
   });
 }
 </script>
