@@ -149,7 +149,7 @@ const colors = [
 "#6c757d"  // gray
 ];
 
-// ✨ Updated Links and Names according to your requirements
+// ✨ "Additional Function" has been successfully renamed to "Absolute Value Function"
 const functions = [
 {name:"Reciprocal Function", link:"https://www.desmos.com/calculator/cvdj2bem03"},
 {name:"Reciprocal Square Function", link:"https://www.desmos.com/calculator/hwgozokqpe"},
@@ -160,7 +160,7 @@ const functions = [
 {name:"Exponential Function", link:"https://www.desmos.com/calculator/brard8s3ty"},
 {name:"Extra Exponential Function", link:"https://www.desmos.com/calculator/n45amups5d"},
 {name:"Extra Sinusoidal Function", link:"https://www.desmos.com/calculator/f5lk59t0tq"},
-{name:"Additional Function", link:"https://www.desmos.com/calculator/mewhbk8mq2"}
+{name:"Absolute Value Function", link:"https://www.desmos.com/calculator/mewhbk8mq2"}
 ];
 
 const container = document.getElementById('container');
@@ -169,7 +169,6 @@ functions.forEach((f, i)=>{
   const card = document.createElement('div');
   card.className='card';
 
-  // Dynamic creation of HTML elements (All labels are fully converted to English)
   card.innerHTML = `
     <a href="${f.link}" target="_blank" class="card-title-link" style="color:${colors[i]}">
       ${f.name}
