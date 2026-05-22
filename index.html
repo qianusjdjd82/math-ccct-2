@@ -41,22 +41,22 @@ body {
   flex-direction: column;
 }
 
-/* 🛠️ 新增：每个卡片标题的超链接基本样式 */
+/* Card Title Links Style */
 .card-title-link {
   display: inline-block;
   margin-top: 0;
-  margin-bottom: 15px; /* 保持与下方组件的间距 */
+  margin-bottom: 15px; /* Keep spacing with elements below */
   font-weight: bold;
   font-size: 22px;
-  text-decoration: none; /* 默认情况下隐藏下划线 */
-  transition: all 0.2s ease; /* 让鼠标悬停时的变色更丝滑 */
-  cursor: pointer; /* 鼠标光标移入时变成小手 */
+  text-decoration: none; /* Hide underline by default */
+  transition: all 0.2s ease; /* Make color transition smoother */
+  cursor: pointer; /* Change cursor to pointer on hover */
 }
 
-/* 🛠️ 新增：鼠标悬停（Hover）在标题上时的反色和下划线特效 */
+/* Card Title Links Hover Effect: Underline and Smart Invert Color Filter */
 .card-title-link:hover {
-  text-decoration: underline; /* 鼠标悬停时出现下划线 */
-  filter: invert(1) hue-rotate(180deg); /* 智能滤镜：无论标题原本是什么颜色，都会瞬间变成反色，形成强烈对比 */
+  text-decoration: underline; /* Show underline on hover */
+  filter: invert(1) hue-rotate(180deg); /* High contrast color inversion filter */
 }
 
 iframe {
@@ -66,7 +66,7 @@ iframe {
   border:none;
 }
 
-/* 富文本工具栏样式 */
+/* Rich Text Editor Toolbar Style */
 .editor-toolbar {
   background: #f1f1f1;
   border: 1px solid #ccc;
@@ -85,7 +85,7 @@ iframe {
   cursor: pointer;
 }
 
-/* 富文本可编辑区域样式 */
+/* Rich Text Editor Content Area Style */
 .editor-content {
   width:100%;
   height:800px;
@@ -119,8 +119,8 @@ iframe {
 <div class="container" id="container"></div>
 
 <script>
-// ==================== ⚠️ 已经配置完毕 ⚠️ ====================
-// 这里完整保留了你当前 index - 副本.txt 中的专属云数据库凭证 
+// ==================== ⚠️ Firebase Configuration ⚠️ ====================
+// Your dedicated Firebase Realtime Database credentials
 const firebaseConfig = {
   apiKey: "AIzaSyCuN-BVa6GaX_8XPFSG0FMd8037zOt4d2g",
   authDomain: "math-cct.firebaseapp.com",
@@ -131,10 +131,10 @@ const firebaseConfig = {
   appId: "1:603371183762:web:8ba3383b1d857336a0504b"
 };
 
-// 初始化 Firebase
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
-// =========================================================
+// =======================================================================
 
 const colors = [
 "#ff7f11", // orange
@@ -146,17 +146,18 @@ const colors = [
 "#00b4d8", // cyan
 "#8d5524", // brown
 "#ff66c4", // pink
-"#6c757d"  // gray (empty)
+"#6c757d"  // gray
 ];
 
+// ✨ Updated Links and Names according to your requirements
 const functions = [
-{name:"Reciprocal Function", link:"https://www.desmos.com/calculator/34zujzfoyj"},
+{name:"Reciprocal Function", link:"https://www.desmos.com/calculator/cvdj2bem03"},
 {name:"Reciprocal Square Function", link:"https://www.desmos.com/calculator/hwgozokqpe"},
 {name:"Polynomial Function", link:"https://www.desmos.com/calculator/iwk1ormcr7"},
-{name:"Trigonometric Asymptote Function", link:"https://www.desmos.com/calculator/hdarhxezos?lang=vi"},
+{name:"Trigonometric Asymptote Function", link:"https://www.desmos.com/calculator/hdarhxezos"},
 {name:"Sinusoidal Function", link:"https://www.desmos.com/calculator/ksyci87tvt?lang=vi"},
 {name:"Exponential Function", link:"https://www.desmos.com/calculator/lw3gyefznd"},
-{name:"Logarithmic Function", link:"https://www.desmos.com/calculator"},
+{name:"Exponential Function", link:"https://www.desmos.com/calculator/brard8s3ty"},
 {name:"Extra Exponential Function", link:"https://www.desmos.com/calculator/n45amups5d"},
 {name:"Extra Sinusoidal Function", link:"https://www.desmos.com/calculator/f5lk59t0tq"},
 {name:"Additional Function", link:"https://www.desmos.com/calculator/mewhbk8mq2"}
@@ -168,9 +169,7 @@ functions.forEach((f, i)=>{
   const card = document.createElement('div');
   card.className='card';
 
-  /* 🛠️ 修改部分：将原本的 <h3> 改为了 <a> 超链接标签 [cite: 13, 32] */
-  /* href="${f.link}" 绑定了该卡片的 Desmos 链接 [cite: 13, 32] */
-  /* target="_blank" 确保点击标题时，会在全新的浏览器标签页安全打开大图 [cite: 13, 32] */
+  // Dynamic creation of HTML elements (All labels are fully converted to English)
   card.innerHTML = `
     <a href="${f.link}" target="_blank" class="card-title-link" style="color:${colors[i]}">
       ${f.name}
@@ -178,30 +177,30 @@ functions.forEach((f, i)=>{
     <iframe src="${f.link}"></iframe>
     
     <div class="editor-toolbar">
-      <button type="button" onclick="execCmd('bold', '${i}')" title="加粗"><b>B</b></button>
-      <button type="button" onclick="execCmd('underline', '${i}')" title="下划线"><u>U</u></button>
+      <button type="button" onclick="execCmd('bold', '${i}')" title="Bold"><b>B</b></button>
+      <button type="button" onclick="execCmd('underline', '${i}')" title="Underline"><u>U</u></button>
       
-      <input type="color" onchange="execCmd('foreColor', '${i}', this.value)" title="字体颜色">
+      <input type="color" onchange="execCmd('foreColor', '${i}', this.value)" title="Font Color">
       
-      <select onchange="execCmd('fontName', '${i}', this.value)" title="字体样式">
+      <select onchange="execCmd('fontName', '${i}', this.value)" title="Font Family">
         <option value="Arial">Arial</option>
         <option value="Times New Roman">Times New Roman</option>
         <option value="Courier New">Courier New</option>
         <option value="Georgia">Georgia</option>
-        <option value="Impact">Impact (粗黑体)</option>
-        <option value="Comic Sans MS">Comic Sans MS (卡通体)</option>
-        <option value="Microsoft YaHei">微软雅黑</option>
-        <option value="SimSun">宋体</option>
+        <option value="Impact">Impact</option>
+        <option value="Comic Sans MS">Comic Sans MS</option>
+        <option value="Microsoft YaHei">Microsoft YaHei</option>
+        <option value="SimSun">SimSun</option>
       </select>
 
-      <select onchange="execCmd('fontSize', '${i}', this.value)" title="字体大小">
-        <option value="3">标准</option>
-        <option value="1">极小</option>
-        <option value="2">较小</option>
-        <option value="4">中等</option>
-        <option value="5">较大</option>
-        <option value="6">大</option>
-        <option value="7">极大</option>
+      <select onchange="execCmd('fontSize', '${i}', this.value)" title="Font Size">
+        <option value="3">Normal</option>
+        <option value="1">X-Small</option>
+        <option value="2">Small</option>
+        <option value="4">Medium</option>
+        <option value="5">Large</option>
+        <option value="6">X-Large</option>
+        <option value="7">XX-Large</option>
       </select>
     </div>
 
@@ -219,7 +218,7 @@ function execCmd(command, index, value = null) {
   document.execCommand(command, false, value);
 }
 
-// 实时同步云端保存
+// Real-time Cloud Save Logic
 function saveToCloud(i){
   const content = document.getElementById('text'+i).innerHTML;
   database.ref('notes/text_' + i).set({
@@ -232,7 +231,7 @@ function saveToCloud(i){
   });
 }
 
-// 实时云端监听更新
+// Real-time Cloud Data Sync Listening Logic
 window.onload = ()=>{
   functions.forEach((_, i)=>{
     database.ref('notes/text_' + i).on('value', (snapshot) => {
