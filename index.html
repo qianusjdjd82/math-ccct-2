@@ -41,10 +41,22 @@ body {
   flex-direction: column;
 }
 
-h3 {
-  margin-top:0;
-  font-weight:bold;
+/* 🛠️ 新增：每个卡片标题的超链接基本样式 */
+.card-title-link {
+  display: inline-block;
+  margin-top: 0;
+  margin-bottom: 15px; /* 保持与下方组件的间距 */
+  font-weight: bold;
   font-size: 22px;
+  text-decoration: none; /* 默认情况下隐藏下划线 */
+  transition: all 0.2s ease; /* 让鼠标悬停时的变色更丝滑 */
+  cursor: pointer; /* 鼠标光标移入时变成小手 */
+}
+
+/* 🛠️ 新增：鼠标悬停（Hover）在标题上时的反色和下划线特效 */
+.card-title-link:hover {
+  text-decoration: underline; /* 鼠标悬停时出现下划线 */
+  filter: invert(1) hue-rotate(180deg); /* 智能滤镜：无论标题原本是什么颜色，都会瞬间变成反色，形成强烈对比 */
 }
 
 iframe {
@@ -108,7 +120,7 @@ iframe {
 
 <script>
 // ==================== ⚠️ 已经配置完毕 ⚠️ ====================
-// 这里已完全填入你截图 image_8b926f.png 中的专属云数据库凭证
+// 这里完整保留了你当前 index - 副本.txt 中的专属云数据库凭证 
 const firebaseConfig = {
   apiKey: "AIzaSyCuN-BVa6GaX_8XPFSG0FMd8037zOt4d2g",
   authDomain: "math-cct.firebaseapp.com",
@@ -156,8 +168,13 @@ functions.forEach((f, i)=>{
   const card = document.createElement('div');
   card.className='card';
 
+  /* 🛠️ 修改部分：将原本的 <h3> 改为了 <a> 超链接标签 [cite: 13, 32] */
+  /* href="${f.link}" 绑定了该卡片的 Desmos 链接 [cite: 13, 32] */
+  /* target="_blank" 确保点击标题时，会在全新的浏览器标签页安全打开大图 [cite: 13, 32] */
   card.innerHTML = `
-    <h3 style="color:${colors[i]}">${f.name}</h3>
+    <a href="${f.link}" target="_blank" class="card-title-link" style="color:${colors[i]}">
+      ${f.name}
+    </a>
     <iframe src="${f.link}"></iframe>
     
     <div class="editor-toolbar">
